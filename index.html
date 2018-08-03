@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+
+    <script>if (window.module) module = window.module;</script>
+
+    <meta charset="UTF-8">
+    <title>LogCopy</title>
+
+    <style>
+        .with-margin {
+            margin-bottom: 5px;
+        }
+
+        .form-control:focus {
+            border-color: #fd7e14;
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px #fd7e14;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="display-3">LogCopy</h1>
+                <p class="lead">This application will take a source, a destination, and copy the log/txt files with the folder structure.</p>
+                <hr class="my-4">
+                <p>Enter the source and destination paths below and then press the "copy" button.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <form>
+                    <div class="form-group">
+                        <label for="sourcePath">Source</label>
+                        <input type="text" class="form-control" id="sourcePath" placeholder="Enter source path">
+                    </div>
+                    <div class="form-group">
+                        <label for="destinationPath">Destination</label>
+                        <input type="text" class="form-control" id="destinationPath" placeholder="Enter destination path">
+                    </div>
+                    <button type="submit" class="btn btn-warning">Copy</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    const electron = require('electron');
+    const { ipcRenderer } = electron;
+
+    const form = document.querySelector('form');
+    form.addEventListener('submit', submitForm);
+
+    function submitForm(e)
+    {
+        e.preventDefault();
+
+        var source = $("#sourcePath").val();
+        var destination = $("#destinationPath").val();
+
+        ipcRenderer.send('source:submit, destination:submit', source, destination);
+    }
+</script>
+
+
+</html>
