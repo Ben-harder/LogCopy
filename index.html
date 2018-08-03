@@ -74,17 +74,22 @@
         var source = $("#sourcePath").val().replace(/\\/g, '/');
         var destination = $("#destinationPath").val().replace(/\\/g, '/');
 
-        copy(source, destination);
+        // Destination must end with '/'
+        if (!destination.endsWith('/') && !destination.endsWith('\\'))
+            destination = destination.concat('/');
 
-        //ipcRenderer.send('source:submit, destination:submit', source, destination);
+        copy(source, destination);
     }
 
     function copy(source, destination)
     {
         // Make the parent directory
         var folderName = source.substring(source.lastIndexOf('/'));
-        fs.mkdir(destination + folderName, source.length);
-        
+        fs.mkdir(destination + folderName, (err) =>
+        {
+            return;
+        });
+
         exec('robocopy ' + source + ' ' + destination + folderName + ' *.txt *.log /e', (error, stdout, stderr) =>
         {
             if (error)
