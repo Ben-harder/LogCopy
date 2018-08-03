@@ -41,11 +41,3 @@ ipcMain.on('source:submit, destination:submit', function (e, source, destination
 {
     copy(source, destination);
 });
-
-function copy(source, destination)
-{
-    fs.copyFileSync(source, destination, (err) =>
-    {
-        if (err) throw err;
-    });
-}
