@@ -51,7 +51,9 @@
                         <label for="destinationPath">Destination</label>
                         <input type="text" class="form-control" id="destinationPath" placeholder="Enter destination path">
                     </div>
-                    <button type="submit" class="btn btn-warning">Copy</button>
+                    <button type="submit" class="btn btn-warning">Copy
+                    </button>
+                    <span id="resultBadge"></span>
                 </form>
             </div>
         </div>
@@ -83,6 +85,8 @@
 
     function copy(source, destination)
     {
+        var resultBadge = document.getElementById("resultBadge");
+
         // Make the parent directory
         var folderName = source.substring(source.lastIndexOf('/'));
         fs.mkdir(destination + folderName, (err) =>
@@ -92,13 +96,26 @@
 
         exec('robocopy ' + source + ' ' + destination + folderName + ' *.txt *.log /e', (error, stdout, stderr) =>
         {
-            if (error)
-            {
-                console.error(`exec error: ${error}`);
-                return;
-            }
             console.log(`stdout: ${stdout}`);
             console.log(`stderr: ${stderr}`);
+
+            // Change result badge
+            resultBadge.className = "badge";
+            if (stdout.includes("cannot find the path"))
+            {
+                resultBadge.className = "badge badge-danger";
+                resultBadge.innerHTML = "Cannot find the specified path";
+            }
+            else if (stdout.includes("New Dir"))
+            {
+                resultBadge.className = "badge badge-info";
+                resultBadge.innerHTML = "Contents copied to a new folder"
+            }
+            else 
+            {
+                resultBadge.className = "badge badge-success";
+                resultBadge.innerHTML = "Contents copied successfuly";
+            }
         });
     }
 </script>
