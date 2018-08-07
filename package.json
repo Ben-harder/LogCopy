@@ -3,13 +3,18 @@
   "version": "0.1.0",
   "description": "",
   "main": "main.js",
+  "productName": "LogCopy:",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+    "package-win": "electron-packager . logcopy --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=BenH --version-string.FileDescription=BenH --version-string.ProductName=\"LogCopy\"",
+    "package-linux": "electron-packager . logcopy --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/icon.png --prune=true --out=release-builds"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^2.0.6"
+    "electron": "^2.0.6",
+    "electron-builder": "^20.27.1",
+    "electron-packager": "^12.1.0"
   }
 }
