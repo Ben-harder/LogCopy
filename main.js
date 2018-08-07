@@ -36,8 +36,3 @@ app.on('activate', () =>
         createWindow();
     }
 });
-
-ipcMain.on('source:submit, destination:submit', function (e, source, destination)
-{
-    copy(source, destination);
-});
