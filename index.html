@@ -78,10 +78,16 @@
         var source = $("#sourcePath").val().replace(/\\/g, '/');
         var destination = $("#destinationPath").val().replace(/\\/g, '/');
 
+        // Remove ending slash so that the folder name can be retrieved.
+        if (source.endsWith('/'))
+            source = source.replace(/\/(?!.*\/)/, '');
+
+        // Folder to create in the destination directory
+        folderName = source.substring(source.lastIndexOf('/'));
+
         // Destination must end with '/'
         if (!destination.endsWith('/') && !destination.endsWith('\\'))
             destination = destination.concat('/');
-
         copy(source, destination);
     }
 
@@ -96,13 +102,12 @@
         resultBadge.className = "";
 
         // Make the parent directory
-        var folderName = source.substring(source.lastIndexOf('/'));
         fs.mkdir(destination + folderName, (err) =>
         {
             return;
         });
 
-        exec('robocopy ' + source + ' ' + destination + folderName + ' *.txt *.log /e', (error, stdout, stderr) =>
+        exec('robocopy \"' + source + '\" \"' + destination + folderName + '\" *.txt *.log /e', (error, stdout, stderr) =>
         {
             console.log(`stdout: ${stdout}`);
             console.log(`stderr: ${stderr}`);
@@ -118,7 +123,8 @@
                 resultBadge.innerHTML = "Cannot find the specified path";
 
                 // Remove the empty directory which was created
-                fs.rmdir(destination + folderName, (err) => {
+                fs.rmdir(destination + folderName, (err) =>
+                {
                     return;
                 });
             }
@@ -126,9 +132,10 @@
             {
                 resultBadge.className = "badge badge-danger";
                 resultBadge.innerHTML = "Invalid parameters";
-                
+
                 // Remove the empty directory which was created
-                fs.rmdir(destination + folderName, (err) => {
+                fs.rmdir(destination + folderName, (err) =>
+                {
                     return;
                 });
             }
