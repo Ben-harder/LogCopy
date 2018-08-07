@@ -51,7 +51,7 @@
                         <label for="destinationPath">Destination</label>
                         <input type="text" class="form-control" id="destinationPath" placeholder="Enter destination path">
                     </div>
-                    <button type="submit" class="btn btn-warning">Copy
+                    <button type="submit" class="btn btn-warning" id="submitButton">Copy
                     </button>
                     <span id="resultBadge"></span>
                 </form>
@@ -68,6 +68,8 @@
 
     const form = document.querySelector('form');
     form.addEventListener('submit', submitForm);
+
+    const submitButton = $("#submitButton");
 
     function submitForm(e)
     {
@@ -87,6 +89,12 @@
     {
         var resultBadge = document.getElementById("resultBadge");
 
+        // Change button text
+        submitButton.html("Copying...");
+
+        // Remove old badge
+        resultBadge.className = "";
+
         // Make the parent directory
         var folderName = source.substring(source.lastIndexOf('/'));
         fs.mkdir(destination + folderName, (err) =>
@@ -99,17 +107,30 @@
             console.log(`stdout: ${stdout}`);
             console.log(`stderr: ${stderr}`);
 
+            // Change button text back
+            submitButton.html("Copy");
+
             // Change result badge
             resultBadge.className = "badge";
-            if (stdout.includes("cannot find the path"))
+            if (stdout.includes("cannot find the "))
             {
                 resultBadge.className = "badge badge-danger";
                 resultBadge.innerHTML = "Cannot find the specified path";
+
+                // Remove the empty directory which was created
+                fs.rmdir(destination + folderName, (err) => {
+                    return;
+                });
             }
-            else if (stdout.includes("New Dir"))
+            else if (stdout.includes("Invalid Param"))
             {
-                resultBadge.className = "badge badge-info";
-                resultBadge.innerHTML = "Contents copied to a new folder"
+                resultBadge.className = "badge badge-danger";
+                resultBadge.innerHTML = "Invalid parameters";
+                
+                // Remove the empty directory which was created
+                fs.rmdir(destination + folderName, (err) => {
+                    return;
+                });
             }
             else 
             {
