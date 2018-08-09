@@ -23,6 +23,10 @@
             margin-bottom: 5px;
         }
 
+        .form-control {
+            border-color: black;
+        }
+
         .form-control:focus {
             border-color: #fd7e14;
             box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px #fd7e14;
@@ -35,7 +39,9 @@
         <div class="row">
             <div class="col">
                 <h1 class="display-3">LogCopy</h1>
-                <p class="lead">This application will copy the log/txt files from a source to a destination. The folder structure will be preserved.</p>
+                <p class="lead">This application will copy the log/txt files from a source to a destination. The folder structure will be
+                    preserved.
+                </p>
                 <hr class="my-4">
                 <p>Enter the full source and destination paths below and then press the "copy" button.</p>
             </div>
@@ -43,13 +49,21 @@
         <div class="row">
             <div class="col">
                 <form>
-                    <div class="form-group">
-                        <label for="sourcePath">Source</label>
-                        <input type="text" class="form-control" id="sourcePath" placeholder="Enter source path">
+                    <label for="sourcePath">Source</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control mr-auto" id="sourcePath" placeholder="Enter source path">
+                        <span class="input-group-btn">
+                            <button class="btn btn-outline-dark" id="sourcePathButton">Choose directory...</button>
+                        </span>
+                    </div>
+                    <label for="destinationPath">Destination</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="destinationPath" placeholder="Enter destination path">
+                        <span class="input-group-btn">
+                            <button class="btn btn-outline-dark" id="destinationPathButton">Choose directory...</button>
+                        </span>
                     </div>
                     <div class="form-group">
-                        <label for="destinationPath">Destination</label>
-                        <input type="text" class="form-control" id="destinationPath" placeholder="Enter destination path">
                     </div>
                     <button type="submit" class="btn btn-warning" id="submitButton">Copy
                     </button>
@@ -62,14 +76,48 @@
 
 <script>
     const electron = require('electron');
-    const { ipcRenderer } = electron;
+    const { ipcRenderer, remote } = electron;
     const { exec } = require('child_process');
     const fs = require('fs');
+    const { dialog } = remote;
 
     const form = document.querySelector('form');
     form.addEventListener('submit', submitForm);
 
     const submitButton = $("#submitButton");
+
+    const buttons = {
+        sourcePathButton: document.getElementById('sourcePathButton'),
+        destinationPathButton: document.getElementById('destinationPathButton')
+    };
+
+    buttons.sourcePathButton.addEventListener('click', (event) =>
+    {
+        event.preventDefault();
+
+        const directory = dialog.showOpenDialog({
+            properties: ['openDirectory'],
+        });
+
+        if (directory)
+        {
+            $("#sourcePath").val(directory);
+        }
+    });
+
+    buttons.destinationPathButton.addEventListener('click', (event) =>
+    {
+        event.preventDefault();
+
+        const directory = dialog.showOpenDialog({
+            properties: ['openDirectory'],
+        });
+
+        if (directory)
+        {
+            $("#destinationPath").val(directory);
+        }
+    });
 
     function submitForm(e)
     {
